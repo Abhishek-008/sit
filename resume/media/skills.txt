@@ -1,0 +1,63 @@
+python
+java
+c++
+javascript
+html
+css
+sql
+data analysis
+machine learning
+deep learning
+tensorflow
+keras
+pytorch
+data visualization
+big data
+hadoop
+spark
+docker
+kubernetes
+cloud computing
+aws
+azure
+devops
+git
+javaScript
+react
+node.js
+angular
+vue.js
+typescript
+ruby
+go
+swift
+r
+scala
+matlab
+excel
+ms office
+excel vba
+automation
+html5
+css3
+api
+rest
+graphql
+docker
+aws lambda
+tensorflow
+pytorch
+apache kafka
+JAVASCRIPT
+MySQL
+Oracle
+Xampp
+PuTTY
+PyCharm
+Jupyter Notebook
+Visual Studio
+Intellij IDEA
+Excellent communication
+good team working
+Organized and motivated individual
+

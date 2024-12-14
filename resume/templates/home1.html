@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Resume Analyzer</title>
+    <style>
+        /* General reset and layout */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            background-image: url('{% static "img/img.png" %}');
+
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Overlay to darken the background image */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+        }
+
+        /* Title styles */
+        h1 {
+            color: #e2ded2; /* Changed to a light orange color */
+            font-size: 50px;
+            font-weight: bold;
+            z-index: 1;
+            margin-bottom: 30px;
+        }
+
+        /* Button styles */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        button {
+            background-color: #9a7653 ; /* Changed to a green color */
+            color: white;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top:15px;
+        }
+
+        button:hover {
+            background-color: #78ad48 ; /* Darker green on hover */
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+            button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <h1>Welcome to Resume Analyzer</h1>
+
+    <div class="button-container">
+        <button onclick="window.location.href='http://127.0.0.1:8000/interview/'">Interview Chatbot</button>
+        <button onclick="window.location.href='http://127.0.0.1:8000/updown'">Analyzer</button>
+    </div>
+</body>
+</html>

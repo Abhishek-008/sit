@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Interview</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            background-image: url('{% static "img/img.png" %}');
+
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+       
+        .container {
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent container */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #b88e64; /* Light cyan */
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        form input {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        form button {
+            background-color: #b88e64;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #78ad48; /* Hover state */
+        }
+
+        #interviewOutput {
+            margin-top: 20px;
+        }
+
+        #interviewOutput p, #interviewOutput button {
+            margin: 10px 0;
+        }
+
+        #interviewOutput input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #interviewOutput button {
+            background-color: #ff6f61;
+            color: white;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Technical Interview</h1>
+        <form id="interviewForm">
+            {% csrf_token %}
+            <label for="candidate_name">Candidate Name:</label>
+            <input type="text" id="candidate_name" name="candidate_name" required>
+
+            <label for="skills">Enter Skills (comma-separated):</label>
+            <input type="text" id="skills" name="skills" required>
+
+            <button type="submit">Start Interview</button>
+        </form>
+
+        <div id="interviewOutput"></div>
+    </div>
+
+    <script>
+        // CSRF token setup
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        let totalScore = 0;
+        let currentQuestionIndex = 0;
+        let questions = [];
+
+        // Start interview
+        $('#interviewForm').submit(function(event) {
+            event.preventDefault();
+            const candidateData = $(this).serialize();
+            const csrfToken = getCsrfToken();
+
+            $.ajax({
+                url: '{% url "interview" %}', // Django endpoint for starting the interview
+                type: 'POST',
+                data: candidateData,
+                headers: { 'X-CSRFToken': csrfToken },
+                success: function(response) {
+                    questions = response.questions;
+                    currentQuestionIndex = 0;
+                    totalScore = 0;
+                    showQuestion();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error starting the interview:', error);
+                    alert('Failed to start the interview. Please try again.');
+                }
+            });
+        });
+
+        // Show current question
+        function showQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                $('#interviewOutput').html(`
+                    <p>${questions[currentQuestionIndex].question}</p>
+                    <input type="text" id="answer" placeholder="Type your answer here">
+                    <button id="submitAnswer">Submit Answer</button>
+                `);
+
+                $('#submitAnswer').click(function() {
+                    const answer = $('#answer').val();
+                    submitAnswer(answer);
+                });
+            }
+        }
+
+        // Submit answer and evaluate
+        function submitAnswer(answer) {
+            const csrfToken = getCsrfToken();
+
+            $.ajax({
+                url: '{% url "evaluate_answer" %}', // Django endpoint for answer evaluation
+                type: 'POST',
+                data: {
+                    'answer': answer,
+                    'question': questions[currentQuestionIndex].question
+                },
+                headers: { 'X-CSRFToken': csrfToken },
+                success: function(response) {
+                    totalScore += response.score;
+
+                    $('#interviewOutput').html(`
+                        <p>Score for this answer: ${response.score}</p>
+                        <p>${response.evaluation}</p>
+                        <button id="nextQuestion">Next Question</button>
+                    `);
+
+                    $('#nextQuestion').click(function() {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex < questions.length) {
+                            showQuestion();
+                        } else {
+                            showFinalResults();
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error evaluating the answer:', error);
+                    alert('Failed to evaluate the answer. Please try again.');
+                }
+            });
+        }
+
+        // Show final results
+        function showFinalResults() {
+            $('#interviewOutput').html(`
+                <p>The interview is complete!</p>
+                <p>Your total score: ${totalScore} out of ${questions.length * 5}</p>
+            `);
+        }
+    </script>
+</body>
+</html>
